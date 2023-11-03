@@ -15,11 +15,13 @@
 # include <unistd.h>
 # include <stdio.h>
 # include <stdlib.h>
+# include <fcntl.h>
 
 int		main(int argc, char **argv, char **envp);
 char	*find_path(char **envp);
 
 /*UTILS*/
 char	**ft_split(char const *s, char c);
+void    ft_putstr_fd(const char *str, int fd);
 
 #endif

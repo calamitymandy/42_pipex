@@ -34,10 +34,7 @@ char	*find_path(char **envp)
 	{
 		if (envp[i][0] == 'P' && envp[i][1] == 'A' && envp[i][2] == 'T'
 			&& envp[i][3] == 'H')
-		{
-			//printf("%c", envp[i][5]);
 			return (&envp[i][5]);
-		}
 		i++;
 	}
 	return (0);
@@ -46,17 +43,36 @@ char	*find_path(char **envp)
 int	main(int argc, char **argv, char **envp)
 {
 	char	**path;
+	int		infile;
+	int		outfile;
 	char	**cmd1;
 	char	**cmd2;
 
-	if (argc == 3)
+	if (argc == 5)
 	{
-		cmd1 = ft_split(argv[1], ' ');
-		cmd2 = ft_split(argv[2], ' ');
+		infile = open(argv[1], O_RDONLY);
+		outfile = open(argv[4], O_CREAT | O_RDWR | O_TRUNC, 0644);
+		if (infile < 0)
+		{
+			perror("infile");
+			exit(EXIT_FAILURE);
+		}
+		if (outfile < 0)
+		{
+			perror("outfile");
+			exit(EXIT_FAILURE);
+		}
 		path = ft_split(find_path(envp), ':');
-		printf("%s", *path);
+		if (!path)
+		{
+			ft_putstr_fd("Error: path not found\n", 1);
+			exit(EXIT_FAILURE);
+		}
+		cmd1 = ft_split(argv[2], ' ');
+		cmd2 = ft_split(argv[3], ' ');
+		printf("%s\n", *envp);
 	}
 	else
-		printf("fuck you");
+		ft_putstr_fd("Error: Incorrect number of args\n", 1);
 	return (0);
 }
