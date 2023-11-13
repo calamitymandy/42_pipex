@@ -20,8 +20,12 @@
 int		main(int argc, char **argv, char **envp);
 char	*find_path(char **envp);
 
-/*UTILS*/
+/*SPLIT*/
 char	**ft_split(char const *s, char c);
+
+/*UTILS*/
+size_t	ft_strlen(const char *s);
 void    ft_putstr_fd(const char *str, int fd);
+void	exit_error(char *error);
 
 #endif

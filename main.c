@@ -12,7 +12,6 @@
 
 #include "pipex.h"
 
-char	**ft_split(char const *s, char c);
 /**
  * The function "find_path" searches through an array of strings (envp) to find 
  * the string that starts with "PATH" and returns a pointer to the characters 
@@ -40,37 +39,57 @@ char	*find_path(char **envp)
 	return (0);
 }
 
-int	main(int argc, char **argv, char **envp)
+/* The `waitpid(pid, NULL, 0);` function is used to wait for a specific child process to terminate. In
+this case, it is waiting for the child process with the process ID `pid` to terminate. The `NULL`
+parameter is used to discard the exit status of the child process, and the `0` parameter is used to
+specify that the function should block until the child process terminates. */
+void	start_process(int infile, int outfile, char **argv, char **envp)
 {
+	int end[2];
+	pid_t	pid;
 	char	**path;
-	int		infile;
-	int		outfile;
 	char	**cmd1;
 	char	**cmd2;
+	(void)infile;
+	(void)outfile;
+
+	path = ft_split(find_path(envp), ':');
+	if (!path)
+		exit_error("Path Error");
+		//printf("%s\n", *path);
+	pipe(end);
+	pid = fork();
+	cmd1 = ft_split(argv[2], ' ');
+	cmd2 = ft_split(argv[3], ' ');
+	printf("pid :%d\n", pid);
+
+	if (pid < 0)
+		exit_error("Fork Error");
+	if (!pid)
+		ft_putstr_fd("child process\n", 1);
+		//child_process(infile, cmd1, envp, end);
+	else
+		ft_putstr_fd("parent process\n", 1);
+		//parent_process(outfile, cmd2, envp, end);
+	waitpid(pid, NULL, 0);
+	waitpid(pid, NULL, 0);
+}
+
+int	main(int argc, char **argv, char **envp)
+{
+	int		infile;
+	int		outfile;
 
 	if (argc == 5)
 	{
 		infile = open(argv[1], O_RDONLY);
 		outfile = open(argv[4], O_CREAT | O_RDWR | O_TRUNC, 0644);
 		if (infile < 0)
-		{
-			perror("infile");
-			exit(EXIT_FAILURE);
-		}
+			exit_error("infile");
 		if (outfile < 0)
-		{
-			perror("outfile");
-			exit(EXIT_FAILURE);
-		}
-		path = ft_split(find_path(envp), ':');
-		if (!path)
-		{
-			ft_putstr_fd("Error: path not found\n", 1);
-			exit(EXIT_FAILURE);
-		}
-		cmd1 = ft_split(argv[2], ' ');
-		cmd2 = ft_split(argv[3], ' ');
-		printf("%s\n", *envp);
+			exit_error("outfile");
+		start_process(infile, outfile, argv, envp);
+		//printf("%s\n", *envp);
 	}
 	else
 		ft_putstr_fd("Error: Incorrect number of args\n", 1);
