@@ -38,7 +38,9 @@ char	*find_path(char **envp)
 	}
 	return (0);
 }
-
+/* The `pipe(end);` function is creating a pipe, which is a mechanism for interprocess communication.
+It creates a pair of file descriptors, `end[0]` and `end[1]`, where `end[0]` is the file descriptor
+for reading from the pipe and `end[1]` is the file descriptor for writing to the pipe. */
 /* The `waitpid(pid, NULL, 0);` function is used to wait for a specific child process to terminate. In
 this case, it is waiting for the child process with the process ID `pid` to terminate. The `NULL`
 parameter is used to discard the exit status of the child process, and the `0` parameter is used to
@@ -58,6 +60,8 @@ void	start_process(int infile, int outfile, char **argv, char **envp)
 		exit_error("Path Error");
 		//printf("%s\n", *path);
 	pipe(end);
+	printf("end[0] :%d\n", end[0]);
+	printf("end[1] :%d\n", end[1]);
 	pid = fork();
 	cmd1 = ft_split(argv[2], ' ');
 	cmd2 = ft_split(argv[3], ' ');
@@ -71,7 +75,7 @@ void	start_process(int infile, int outfile, char **argv, char **envp)
 	else
 		ft_putstr_fd("parent process\n", 1);
 		//parent_process(outfile, cmd2, envp, end);
-	waitpid(pid, NULL, 0);
+	printf("waitpid :%d\n", waitpid(pid, NULL, 0));
 	waitpid(pid, NULL, 0);
 }
 

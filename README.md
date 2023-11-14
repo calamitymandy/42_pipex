@@ -5,6 +5,10 @@ This project is about handling pipes<br>
 Pipex reproduces the behaviour of the shell pipe | command in c it launches as
 `.pipex infile cmd1 cmd2 outfile` and behaves as this line does in the shell `<infile cmd1 | cmd2 > outfile`.
 
+## Tutos
+### https://csnotes.medium.com/pipex-tutorial-42-project-4469f5dd5901
+### https://web.archive.org/web/20220508111904/https://www.codequoi.com/en/pipex-reproducing-the-pipe-operator-in-c/#understanding_the_pipe_operator_for_pipex
+
 ## Usage
 To compile, use ```make``` or  ```make all```.
 
