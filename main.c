@@ -24,20 +24,35 @@
  * environment variable.
  */
 
-char	*find_path(char **envp)
+char	*find_path(char **envp, char *cmd)
 {
-	int	i;
+	int		i;
+	char	**all_paths;
+	char	*piece_path;
+	char	*res;
 
-	i = 0;
-	while (envp[i])
+	i = -1;
+	while (envp[++i])
 	{
 		if (envp[i][0] == 'P' && envp[i][1] == 'A' && envp[i][2] == 'T'
 			&& envp[i][3] == 'H')
-			return (&envp[i][5]);
-		i++;
+		{
+			all_paths = ft_split(envp[i] + 5, ':');
+			i = -1;
+			while (all_paths[++i])
+			{
+				piece_path = ft_strjoin(all_paths[i], "/");
+				res = ft_strjoin(piece_path, cmd);
+				if (access(res, F_OK) == 0)
+					return (res);
+				else
+					free(res);
+			}
+		}
 	}
-	return (0);
+	return (0); // Si la variable de entorno PATH no está presente en envp
 }
+
 /* The `waitpid(-1, NULL, 0);` function is used to wait for any child process to terminate. The first
 parameter `-1` indicates that the function should wait for any child process. The second parameter
 `NULL` is used to discard the exit status of the child process. The third parameter `0` is used to
@@ -61,23 +76,24 @@ for reading from the pipe and `end[1]` is the file descriptor for writing to the
 
 void	start_process(int infile, int outfile, char **argv, char **envp)
 {
-	int end[2];
+	int		end[2];
 	pid_t	pid;
-	char	**path;
+	char	*path;
 	char	**cmd1;
 	char	**cmd2;
 	(void)infile;
 
-	path = ft_split(find_path(envp), ':');
-	if (!path)
-		exit_error("Path Error");
-		printf("%s\n", *path);
+
 	pipe(end);
 	//printf("end[0] :%d\n", end[0]);
 	//printf("end[1] :%d\n", end[1]);
 	pid = fork();
 	cmd1 = ft_split(argv[2], ' ');
 	cmd2 = ft_split(argv[3], ' ');
+		path = find_path(envp, cmd1[0]);
+	if (!path)
+		exit_error("Path Error");
+	printf("path: %s\n", path);
 	printf("pid :%d\n", pid);
 
 	if (pid < 0)

@@ -1,0 +1,44 @@
+Process:         pipex [11895]
+Path:            /Volumes/VOLUME/*/pipex
+Load Address:    0x1048e9000
+Identifier:      pipex
+Version:         ???
+Code Type:       X86-64
+Parent Process:  zsh [1391]
+
+Date/Time:       2023-11-16 14:30:49.484 +0100
+Launch Time:     2023-11-16 14:30:45.330 +0100
+OS Version:      Mac OS X 10.15.7 (19H15)
+Report Version:  7
+Analysis Tool:   /usr/bin/leaks
+----
+
+leaks Report Version: 4.0
+Process 11895: 175 nodes malloced for 12 KB
+Process 11895: 19 leaks for 480 total leaked bytes.
+
+    19 (480 bytes) << TOTAL >>
+
+      10 (304 bytes) ROOT LEAK: 0x7fc9224058f0 [80]
+         1 (64 bytes) 0x7fc9224059e0 [64]  length: 60  "/Library/Frameworks/Mono.framework/Versions/Current/Commands"
+         1 (32 bytes) 0x7fc922405990 [32]  length: 23  "/usr/local/share/dotnet"
+         1 (32 bytes) 0x7fc9224059b0 [32]  length: 16  "/usr/local/munki"
+         1 (16 bytes) 0x7fc922405940 [16]  length: 14  "/usr/local/bin"
+         1 (16 bytes) 0x7fc922405950 [16]  length: 8  "/usr/bin"
+         1 (16 bytes) 0x7fc922405960 [16]  length: 4  "/bin"
+         1 (16 bytes) 0x7fc922405970 [16]  length: 9  "/usr/sbin"
+         1 (16 bytes) 0x7fc922405980 [16]  length: 5  "/sbin"
+         1 (16 bytes) 0x7fc9224059d0 [16]  length: 15  "~/.dotnet/tools"
+
+      3 (64 bytes) ROOT LEAK: 0x7fc922405870 [32]
+         1 (16 bytes) 0x7fc922405890 [16]  length: 4  "grep"
+         1 (16 bytes) 0x7fc9224058a0 [16]  length: 2  "a1"
+
+      3 (64 bytes) ROOT LEAK: 0x7fc9224058b0 [32]
+         1 (16 bytes) 0x7fc9224058d0 [16]  length: 2  "wc"
+         1 (16 bytes) 0x7fc9224058e0 [16]  length: 2  "-w"
+
+      1 (16 bytes) ROOT LEAK: 0x7fc922405a20 [16]  length: 15  "/usr/local/bin/"
+      1 (16 bytes) ROOT LEAK: 0x7fc922405a50 [16]  length: 9  "/usr/bin/"
+      1 (16 bytes) ROOT LEAK: 0x7fc922405a60 [16]  length: 13  "/usr/bin/grep"
+
