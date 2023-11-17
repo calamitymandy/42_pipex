@@ -1,0 +1,59 @@
+Process:         pipex [45498]
+Path:            */pipex
+Load Address:    0x100d90000
+Identifier:      pipex
+Version:         0
+Code Type:       X86-64 (translated)
+Platform:        macOS
+Parent Process:  zsh [44466]
+
+Date/Time:       2023-11-16 17:48:29.016 +0100
+Launch Time:     2023-11-16 17:48:24.679 +0100
+OS Version:      macOS 13.4.1 (22F82)
+Report Version:  7
+Analysis Tool:   /usr/bin/leaks
+
+Physical footprint:         1421K
+Physical footprint (peak):  1493K
+Idle exit:                  untracked
+----
+
+leaks Report Version: 4.0
+Process 45498: 205 nodes malloced for 14 KB
+Process 45498: 29 leaks for 1088 total leaked bytes.
+
+    29 (1.06K) << TOTAL >>
+
+      16 (752 bytes) ROOT LEAK: 0x7f8dc6804100 [128]
+         1 (96 bytes) 0x7f8dc6804310 [96]  length: 81  "/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/appleinternal/bin"
+         1 (80 bytes) 0x7f8dc6804270 [80]  length: 73  "/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/local/bin"
+         1 (80 bytes) 0x7f8dc68042c0 [80]  length: 67  "/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/bin"
+         1 (64 bytes) 0x7f8dc68041c0 [64]  length: 53  "/Library/Frameworks/Python.framework/Versions/3.9/bin"
+         1 (64 bytes) 0x7f8dc68043b0 [64]  length: 53  "/Library/Frameworks/Python.framework/Versions/3.9/bin"
+         1 (32 bytes) 0x7f8dc6804180 [32]  length: 17  "/opt/homebrew/bin"
+         1 (32 bytes) 0x7f8dc68041a0 [32]  length: 18  "/opt/homebrew/sbin"
+         1 (32 bytes) 0x7f8dc6804210 [32]  length: 29  "/System/Cryptexes/App/usr/bin"
+         1 (32 bytes) 0x7f8dc6804370 [32]  length: 17  "/opt/homebrew/bin"
+         1 (32 bytes) 0x7f8dc6804390 [32]  length: 18  "/opt/homebrew/sbin"
+         1 (16 bytes) 0x7f8dc6804200 [16]  length: 14  "/usr/local/bin"
+         1 (16 bytes) 0x7f8dc6804230 [16]  length: 8  "/usr/bin"
+         1 (16 bytes) 0x7f8dc6804240 [16]  length: 4  "/bin"
+         1 (16 bytes) 0x7f8dc6804250 [16]  length: 9  "/usr/sbin"
+         1 (16 bytes) 0x7f8dc6804260 [16]  length: 5  "/sbin"
+
+      3 (64 bytes) ROOT LEAK: 0x7f8dc6804080 [32]
+         1 (16 bytes) 0x7f8dc68040a0 [16]  length: 4  "grep"
+         1 (16 bytes) 0x7f8dc68040b0 [16]  length: 2  "a1"
+
+      3 (64 bytes) ROOT LEAK: 0x7f8dc68040c0 [32]
+         1 (16 bytes) 0x7f8dc68040e0 [16]  length: 2  "wc"
+         1 (16 bytes) 0x7f8dc68040f0 [16]  length: 2  "-w"
+
+      1 (64 bytes) ROOT LEAK: 0x7f8dc6804450 [64]  length: 54  "/Library/Frameworks/Python.framework/Versions/3.9/bin/"
+      1 (32 bytes) ROOT LEAK: 0x7f8dc68043f0 [32]  length: 18  "/opt/homebrew/bin/"
+      1 (32 bytes) ROOT LEAK: 0x7f8dc6804410 [32]  length: 19  "/opt/homebrew/sbin/"
+      1 (32 bytes) ROOT LEAK: 0x7f8dc68044d0 [32]  length: 30  "/System/Cryptexes/App/usr/bin/"
+      1 (16 bytes) ROOT LEAK: 0x7f8dc6804430 [16]  length: 15  "/usr/local/bin/"
+      1 (16 bytes) ROOT LEAK: 0x7f8dc6804440 [16]  length: 13  "/usr/bin/grep"
+      1 (16 bytes) ROOT LEAK: 0x7f8dc68044c0 [16]  length: 9  "/usr/bin/"
+

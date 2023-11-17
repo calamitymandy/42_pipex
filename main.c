@@ -28,7 +28,6 @@ char	*find_path(char **envp, char *cmd)
 {
 	int		i;
 	char	**all_paths;
-	char	*piece_path;
 	char	*res;
 
 	i = -1;
@@ -41,13 +40,16 @@ char	*find_path(char **envp, char *cmd)
 			i = -1;
 			while (all_paths[++i])
 			{
-				piece_path = ft_strjoin(all_paths[i], "/");
-				res = ft_strjoin(piece_path, cmd);
+				res = ft_strjoin((ft_strjoin(all_paths[i], "/")), cmd);
+				free(all_paths[i]);
 				if (access(res, F_OK) == 0)
+				{
+					free(all_paths);
 					return (res);
-				else
-					free(res);
+				}
+				free(res);
 			}
+			free(all_paths);
 		}
 	}
 	return (0); // Si la variable de entorno PATH no está presente en envp
@@ -85,8 +87,6 @@ void	start_process(int infile, int outfile, char **argv, char **envp)
 
 
 	pipe(end);
-	//printf("end[0] :%d\n", end[0]);
-	//printf("end[1] :%d\n", end[1]);
 	pid = fork();
 	cmd1 = ft_split(argv[2], ' ');
 	cmd2 = ft_split(argv[3], ' ');
@@ -102,8 +102,15 @@ void	start_process(int infile, int outfile, char **argv, char **envp)
 		ft_putstr_fd("child process\n", 1);
 		//child_process(infile, cmd1, envp, end);
 	else
+	{
 		ft_putstr_fd("parent process\n", 1);
 		parent_process(outfile, cmd2, envp, end);
+	}
+}
+
+void	leaks(void)
+{
+	system("leaks pipex");
 }
 
 int	main(int argc, char **argv, char **envp)
@@ -120,6 +127,7 @@ int	main(int argc, char **argv, char **envp)
 		if (outfile < 0)
 			exit_error("outfile");
 		start_process(infile, outfile, argv, envp);
+		atexit(leaks);
 		//printf("%s\n", *envp);
 	}
 	else

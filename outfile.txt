@@ -1,0 +1,51 @@
+Process:         pipex [52107]
+Path:            /Users/USER/Desktop/*/pipex
+Load Address:    0x1040c4000
+Identifier:      pipex
+Version:         0
+Code Type:       ARM64
+Platform:        macOS
+Parent Process:  zsh [44466]
+
+Date/Time:       2023-11-16 19:26:46.469 +0100
+Launch Time:     2023-11-16 19:26:42.776 +0100
+OS Version:      macOS 13.4.1 (22F82)
+Report Version:  7
+Analysis Tool:   /usr/bin/leaks
+
+Physical footprint:         817K
+Physical footprint (peak):  817K
+Idle exit:                  untracked
+----
+
+leaks Report Version: 4.0
+Process 52107: 240 nodes malloced for 17 KB
+Process 52107: 22 leaks for 768 total leaked bytes.
+
+    22 (768 bytes) << TOTAL >>
+      1 (96 bytes) ROOT LEAK: 0x136e06c50 [96]
+      1 (80 bytes) ROOT LEAK: 0x136e06bb0 [80]
+      1 (80 bytes) ROOT LEAK: 0x136e06c00 [80]
+
+      3 (64 bytes) ROOT LEAK: 0x136e06860 [32]
+         1 (16 bytes) 0x136e06880 [16]
+         1 (16 bytes) 0x136e06890 [16]
+
+      3 (64 bytes) ROOT LEAK: 0x136e06a40 [32]
+         1 (16 bytes) 0x136e06a60 [16]
+         1 (16 bytes) 0x136e06a70 [16]
+
+      1 (64 bytes) ROOT LEAK: 0x136f04080 [64]
+      1 (64 bytes) ROOT LEAK: 0x136f04120 [64]
+      1 (32 bytes) ROOT LEAK: 0x136e06cb0 [32]
+      1 (32 bytes) ROOT LEAK: 0x136e06cd0 [32]
+      1 (32 bytes) ROOT LEAK: 0x136f040c0 [32]
+      1 (32 bytes) ROOT LEAK: 0x136f040e0 [32]
+      1 (32 bytes) ROOT LEAK: 0x136f041a0 [32]
+      1 (16 bytes) ROOT LEAK: 0x136e069e0 [16]
+      1 (16 bytes) ROOT LEAK: 0x136e069f0 [16]
+      1 (16 bytes) ROOT LEAK: 0x136e06a00 [16]
+      1 (16 bytes) ROOT LEAK: 0x136f04100 [16]
+      1 (16 bytes) ROOT LEAK: 0x136f04110 [16]
+      1 (16 bytes) ROOT LEAK: 0x136f04190 [16]
+
