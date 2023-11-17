@@ -1,51 +1,41 @@
-Process:         pipex [52107]
-Path:            /Users/USER/Desktop/*/pipex
-Load Address:    0x1040c4000
+ TESTTTTTT g
+Process:         pipex [16597]
+Path:            /Volumes/VOLUME/*/pipex
+Load Address:    0x10003a000
 Identifier:      pipex
-Version:         0
-Code Type:       ARM64
-Platform:        macOS
-Parent Process:  zsh [44466]
+Version:         ???
+Code Type:       X86-64
+Parent Process:  zsh [3004]
 
-Date/Time:       2023-11-16 19:26:46.469 +0100
-Launch Time:     2023-11-16 19:26:42.776 +0100
-OS Version:      macOS 13.4.1 (22F82)
+Date/Time:       2023-11-17 15:23:22.177 +0100
+Launch Time:     2023-11-17 15:10:50.942 +0100
+OS Version:      Mac OS X 10.15.7 (19H15)
 Report Version:  7
 Analysis Tool:   /usr/bin/leaks
-
-Physical footprint:         817K
-Physical footprint (peak):  817K
-Idle exit:                  untracked
 ----
 
 leaks Report Version: 4.0
-Process 52107: 240 nodes malloced for 17 KB
-Process 52107: 22 leaks for 768 total leaked bytes.
+Process 16597: 172 nodes malloced for 12 KB
+Process 16597: 16 leaks for 368 total leaked bytes.
 
-    22 (768 bytes) << TOTAL >>
-      1 (96 bytes) ROOT LEAK: 0x136e06c50 [96]
-      1 (80 bytes) ROOT LEAK: 0x136e06bb0 [80]
-      1 (80 bytes) ROOT LEAK: 0x136e06c00 [80]
+    16 (368 bytes) << TOTAL >>
 
-      3 (64 bytes) ROOT LEAK: 0x136e06860 [32]
-         1 (16 bytes) 0x136e06880 [16]
-         1 (16 bytes) 0x136e06890 [16]
+      3 (64 bytes) ROOT LEAK: 0x7f83c4504080 [32]
+         1 (16 bytes) 0x7f83c45040a0 [16]  length: 4  "grep"
+         1 (16 bytes) 0x7f83c45040b0 [16]  length: 2  "a1"
 
-      3 (64 bytes) ROOT LEAK: 0x136e06a40 [32]
-         1 (16 bytes) 0x136e06a60 [16]
-         1 (16 bytes) 0x136e06a70 [16]
+      3 (64 bytes) ROOT LEAK: 0x7f83c45040c0 [32]
+         1 (16 bytes) 0x7f83c45040e0 [16]  length: 2  "wc"
+         1 (16 bytes) 0x7f83c45040f0 [16]  length: 2  "-w"
 
-      1 (64 bytes) ROOT LEAK: 0x136f04080 [64]
-      1 (64 bytes) ROOT LEAK: 0x136f04120 [64]
-      1 (32 bytes) ROOT LEAK: 0x136e06cb0 [32]
-      1 (32 bytes) ROOT LEAK: 0x136e06cd0 [32]
-      1 (32 bytes) ROOT LEAK: 0x136f040c0 [32]
-      1 (32 bytes) ROOT LEAK: 0x136f040e0 [32]
-      1 (32 bytes) ROOT LEAK: 0x136f041a0 [32]
-      1 (16 bytes) ROOT LEAK: 0x136e069e0 [16]
-      1 (16 bytes) ROOT LEAK: 0x136e069f0 [16]
-      1 (16 bytes) ROOT LEAK: 0x136e06a00 [16]
-      1 (16 bytes) ROOT LEAK: 0x136f04100 [16]
-      1 (16 bytes) ROOT LEAK: 0x136f04110 [16]
-      1 (16 bytes) ROOT LEAK: 0x136f04190 [16]
+      1 (64 bytes) ROOT LEAK: 0x7f83c45041f0 [64]  length: 60  "/Library/Frameworks/Mono.framework/Versions/Current/Commands"
+      1 (32 bytes) ROOT LEAK: 0x7f83c45041a0 [32]  length: 23  "/usr/local/share/dotnet"
+      1 (32 bytes) ROOT LEAK: 0x7f83c45041c0 [32]  length: 16  "/usr/local/munki"
+      1 (16 bytes) ROOT LEAK: 0x7f83c4504150 [16]  length: 9  "/usr/bin/"
+      1 (16 bytes) ROOT LEAK: 0x7f83c4504170 [16]  length: 4  "/bin"
+      1 (16 bytes) ROOT LEAK: 0x7f83c4504180 [16]  length: 9  "/usr/sbin"
+      1 (16 bytes) ROOT LEAK: 0x7f83c4504190 [16]  length: 5  "/sbin"
+      1 (16 bytes) ROOT LEAK: 0x7f83c45041e0 [16]  length: 15  "~/.dotnet/tools"
+      1 (16 bytes) ROOT LEAK: 0x7f83c4504230 [16]  length: 15  "/usr/local/bin/"
+      1 (16 bytes) ROOT LEAK: 0x7f83c4504260 [16]  length: 13  "/usr/bin/grep"
 

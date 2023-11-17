@@ -27,7 +27,7 @@
 char	*find_path(char **envp, char *cmd)
 {
 	int		i;
-	char	**all_paths;
+	char	**every_path;
 	char	*res;
 
 	i = -1;
@@ -36,20 +36,20 @@ char	*find_path(char **envp, char *cmd)
 		if (envp[i][0] == 'P' && envp[i][1] == 'A' && envp[i][2] == 'T'
 			&& envp[i][3] == 'H')
 		{
-			all_paths = ft_split(envp[i] + 5, ':');
+			every_path = ft_split(envp[i] + 5, ':');
 			i = -1;
-			while (all_paths[++i])
+			while (every_path[++i])
 			{
-				res = ft_strjoin((ft_strjoin(all_paths[i], "/")), cmd);
-				free(all_paths[i]);
+				res = ft_strjoin((ft_strjoin(every_path[i], "/")), cmd);
+				free(every_path[i]);
 				if (access(res, F_OK) == 0)
 				{
-					free(all_paths);
+					free(every_path);
 					return (res);
 				}
 				free(res);
 			}
-			free(all_paths);
+			free(every_path);
 		}
 	}
 	return (0); // Si la variable de entorno PATH no está presente en envp
@@ -84,7 +84,6 @@ void	start_process(int infile, int outfile, char **argv, char **envp)
 	char	**cmd1;
 	char	**cmd2;
 	(void)infile;
-
 
 	pipe(end);
 	pid = fork();
