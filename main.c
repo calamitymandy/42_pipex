@@ -61,15 +61,21 @@ parameter `-1` indicates that the function should wait for any child process. Th
 specify that the function should block until a child process terminates. */
 void	parent_process(int outfile, char **cmd2, char **envp, int *end)
 {
-	(void)cmd2;
-	(void)envp;
-	printf("waitpid :%d\n", waitpid(-1, NULL, 0));
+	char	*path;
+
+	//printf("waitpid :%d\n", waitpid(-1, NULL, 0));
 	waitpid(-1, NULL, 0);
 	dup2(outfile, STDOUT_FILENO); // outfile is the stdout any output written to stdout will be written to the `outfile` file instead.
 	close(end[1]); //closing the write end of the pipe to indicate that `parent_process` has finished writing. This allows the child process to detect the end of the input and exit.
 	dup2(end[0], STDIN_FILENO); // end[0] is the stdin
-	close(end[0]); //closing the read end of the pipe to indicate that `parent_process` has finished reading. This allows the child process to detect the end of the output and exit.
-	close(outfile); //close fd for the `outfile` file o free up system resources and indicate that the file is no longer needed.
+	//close(end[0]); //closing the read end of the pipe to indicate that `parent_process` has finished reading. This allows the child process to detect the end of the output and exit.
+	//close(outfile); //close fd for the `outfile` file o free up system resources and indicate that the file is no longer needed.
+	path = find_path(envp, cmd2[0]);
+	if (execve(path, cmd2, envp) == -1)
+	{
+		exit_error("Execve Error");
+	}
+	free(cmd2);
 }
 
 /* The `pipe(end);` function is creating a pipe, which is a mechanism for interprocess communication.
