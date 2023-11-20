@@ -12,6 +12,11 @@
 
 #include "pipex.h"
 
+void	leaks(void)
+{
+	system("leaks pipex");
+}
+
 char	*find_path(char **envp, char *cmd)
 {
 	int		i;
@@ -31,16 +36,25 @@ char	*find_path(char **envp, char *cmd)
 				res = ft_strjoin((ft_strjoin(every_path[i], "/")), cmd);
 				free(every_path[i]);
 				if (access(res, F_OK) == 0)
-				{
-					free(every_path);
 					return (res);
-				}
 				free(res);
 			}
-			free(every_path);
 		}
 	}
 	return (0); // Si la variable de entorno PATH no está presente en envp
+}
+
+void	child_process(int infile, char **cmd1, char **envp, int *end)
+{
+	char	*path;
+
+	dup2(infile, STDIN_FILENO);
+	close(end[0]);
+	dup2(end[1], STDOUT_FILENO);
+	path = find_path(envp, cmd1[0]);
+	if (execve(path, cmd1, envp) == -1)
+		exit_error("Execve Error");
+	free(cmd1);
 }
 
 /* The `waitpid(-1, NULL, 0);` function is used to wait for any child process to terminate. The first
@@ -56,13 +70,9 @@ void	parent_process(int outfile, char **cmd2, char **envp, int *end)
 	dup2(outfile, STDOUT_FILENO); // outfile is the stdout any output written to stdout will be written to the `outfile` file instead.
 	close(end[1]); //closing the write end of the pipe to indicate that `parent_process` has finished writing. This allows the child process to detect the end of the input and exit.
 	dup2(end[0], STDIN_FILENO); // end[0] is the stdin
-	//close(end[0]); //closing the read end of the pipe to indicate that `parent_process` has finished reading. This allows the child process to detect the end of the output and exit.
-	//close(outfile); //close fd for the `outfile` file o free up system resources and indicate that the file is no longer needed.
 	path = find_path(envp, cmd2[0]);
 	if (execve(path, cmd2, envp) == -1)
-	{
 		exit_error("Execve Error");
-	}
 	free(cmd2);
 }
 
@@ -77,7 +87,6 @@ void	start_process(int infile, int outfile, char **argv, char **envp)
 	char	*path;
 	char	**cmd1;
 	char	**cmd2;
-	(void)infile;
 
 	pipe(end);
 	pid = fork();
@@ -86,31 +95,27 @@ void	start_process(int infile, int outfile, char **argv, char **envp)
 		path = find_path(envp, cmd1[0]);
 	if (!path)
 		exit_error("Path Error");
-	printf("path: %s\n", path);
-	printf("pid :%d\n", pid);
-
 	if (pid < 0)
 		exit_error("Fork Error");
 	if (!pid)
+	{
 		ft_putstr_fd("child process\n", 1);
-		//child_process(infile, cmd1, envp, end);
+		child_process(infile, cmd1, envp, end);
+	}
 	else
 	{
 		ft_putstr_fd("parent process\n", 1);
 		parent_process(outfile, cmd2, envp, end);
 	}
-}
-
-void	leaks(void)
-{
-	system("leaks pipex");
+	free_two_stars(cmd2);
+	free_two_stars(cmd1);
 }
 
 int	main(int argc, char **argv, char **envp)
 {
 	int		infile;
 	int		outfile;
-
+	system("leaks pipex");
 	if (argc == 5)
 	{
 		infile = open(argv[1], O_RDONLY);
@@ -120,8 +125,6 @@ int	main(int argc, char **argv, char **envp)
 		if (outfile < 0)
 			exit_error("outfile");
 		start_process(infile, outfile, argv, envp);
-		atexit(leaks);
-		//printf("%s\n", *envp);
 	}
 	else
 		ft_putstr_fd("Error: Incorrect number of args\n", 1);

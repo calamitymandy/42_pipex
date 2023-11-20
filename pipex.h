@@ -28,5 +28,6 @@ size_t	ft_strlen(const char *s);
 void    ft_putstr_fd(const char *str, int fd);
 char	*ft_strjoin(char const *s1, char const *s2);
 void	exit_error(char *error);
+void	free_two_stars(char **two_stars);
 
 #endif

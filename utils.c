@@ -36,6 +36,19 @@ void	exit_error(char *error)
 	exit(EXIT_FAILURE);
 }
 
+void	free_two_stars(char **two_stars)
+{
+	int	i;
+
+	i = 0;
+	while (two_stars[i])
+	{
+		free(two_stars[i]);
+		i++;
+	}
+	free(two_stars);
+}
+
 char	*ft_strjoin(char const *s1, char const *s2)
 {
 	size_t	i;
