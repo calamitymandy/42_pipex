@@ -44,7 +44,7 @@ char	*find_path(char **envp, char *cmd)
 	return (0); // Si la variable de entorno PATH no está presente en envp
 }
 
-void	child_1(int infile, char **cmd1, char **envp, int *end)
+void	child_process(int infile, char **cmd1, char **envp, int *end)
 {
 	char	*path;
 
@@ -61,7 +61,7 @@ void	child_1(int infile, char **cmd1, char **envp, int *end)
 parameter `-1` indicates that the function should wait for any child process. The second parameter
 `NULL` is used to discard the exit status of the child process. The third parameter `0` is used to
 specify that the function should block until a child process terminates. */
-void	child_2(int outfile, char **cmd2, char **envp, int *end)
+void	parent_process(int outfile, char **cmd2, char **envp, int *end)
 {
 	char	*path;
 
@@ -83,27 +83,32 @@ for reading from the pipe and `end[1]` is the file descriptor for writing to the
 void	start_process(int infile, int outfile, char **argv, char **envp)
 {
 	int		end[2];
-	pid_t	pid[2];
+	pid_t	pid;
 	char	*path;
 	char	**cmd1;
 	char	**cmd2;
 
 	pipe(end);
-	pid[0] = fork();
+	pid = fork();
 	cmd1 = ft_split(argv[2], ' ');
 	cmd2 = ft_split(argv[3], ' ');
-	path = find_path(envp, cmd1[0]);
+		path = find_path(envp, cmd1[0]);
 	if (!path)
 		exit_error("Path Error");
-	if (pid[0] < 0)
+	if (pid < 0)
 		exit_error("Fork Error");
-	else if (pid[0] == 0)
-		child_1(infile, cmd1, envp, end);
-	pid[1] = fork();
-	if (pid[1] < 0)
-		exit_error("Fork Error");
-	else if (pid[1] == 0)
-		child_2(outfile, cmd2, envp, end);
+	if (!pid)
+	{
+		ft_putstr_fd("child process\n", 1);
+		child_process(infile, cmd1, envp, end);
+	}
+	else
+	{
+		ft_putstr_fd("parent process\n", 1);
+		parent_process(outfile, cmd2, envp, end);
+	}
+	free_two_stars(cmd2);
+	free_two_stars(cmd1);
 }
 
 int	main(int argc, char **argv, char **envp)
