@@ -12,6 +12,8 @@
 
 #include "pipex.h"
 
+//TODO: ADD AN ERROR MSG FOR WRONG ARGS
+
 char	*find_path(char **envp, char *cmd)
 {
 	int		i;
