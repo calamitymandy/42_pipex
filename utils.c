@@ -12,7 +12,6 @@
 
 #include "pipex.h"
 
-
 size_t	ft_strlen(const char *s)
 {
 	size_t	i;
@@ -23,10 +22,10 @@ size_t	ft_strlen(const char *s)
 	return (i);
 }
 
-void ft_putstr_fd(const char *str, int fd)
+void	ft_putstr_fd(const char *str, int fd)
 {
 	if (!*str)
-		return;
+		return ;
 	write (fd, str, ft_strlen(str));
 }
 
