@@ -16,7 +16,8 @@ GREEN =			\033[0;92m
 
 NAME = pipex
 CC = gcc
-CFLAGS = -Wall -Wextra -Werror -g3 -fsanitize=address  -O
+CFLAGS = -Wall -Wextra -Werror -g3 
+#-fsanitize=address  -O
 
 SRC = main.c utils.c split.c
 

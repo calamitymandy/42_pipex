@@ -20,25 +20,20 @@ char	*find_path(char **envp, char *cmd)
 	char	**every_path;
 	char	*path;
 
+	i = 0;
+	while (envp[i] != NULL && ft_strnstr(envp[i], "PATH", 4) == NULL)
+		i++;
+	every_path = ft_split(envp[i] + 5, ':');
 	i = -1;
-	while (envp[++i])
+	while (every_path[++i])
 	{
-		if (envp[i][0] == 'P' && envp[i][1] == 'A' && envp[i][2] == 'T'
-			&& envp[i][3] == 'H')
-		{
-			every_path = ft_split(envp[i] + 5, ':');
-			i = -1;
-			while (every_path[++i])
-			{
-				path = ft_strjoin((ft_strjoin(every_path[i], "/")), cmd);
-				free(every_path[i]);
-				if (access(path, F_OK) == 0)
-					return (path);
-				free(path);
-			}
-		}
+		path = ft_strjoin((ft_strjoin(every_path[i], "/")), cmd);
+		free(every_path[i]);
+		if (access(path, F_OK | X_OK) == 0)
+			return (path);
+		free(path);
 	}
-	return (0);
+	return (NULL);
 }
 
 /* `dup2(infile, STDIN_FILENO);` duplicates the fd `infile` and assign it 
@@ -66,7 +61,7 @@ void	child_1(int infile, char **argv, char **envp, int *end)
 	cmd1 = ft_split(argv[2], ' ');
 	path = find_path(envp, cmd1[0]);
 	if (!path)
-		exit_error("command not found");
+		exit_error("Command Error");
 	if (execve(path, cmd1, envp) == -1)
 		exit_error("Execve Error");
 }
@@ -87,7 +82,7 @@ void	child_2(int outfile, char **argv, char **envp, int *end)
 	cmd2 = ft_split(argv[3], ' ');
 	path = find_path(envp, cmd2[0]);
 	if (!path)
-		exit_error("command not found");
+		exit_error("Command Error");
 	if (execve(path, cmd2, envp) == -1)
 		exit_error("Execve Error");
 }
@@ -126,11 +121,16 @@ void	start_process(int infile, int outfile, char **argv, char **envp)
 	waitpid(pid[1], NULL, 0);
 }
 
+void a()
+{
+	system("leaks pipex");
+}
 int	main(int argc, char **argv, char **envp)
 {
 	int		infile;
 	int		outfile;
 
+	//atexit(a);
 	if (argc == 5)
 	{
 		infile = open(argv[1], O_RDONLY);
@@ -140,7 +140,7 @@ int	main(int argc, char **argv, char **envp)
 		if (outfile < 0)
 			exit_error("outfile");
 		start_process(infile, outfile, argv, envp);
-		//system("leaks pipex");
+	//system("leaks pipex");
 		//printf("%s", "look the outfile");
 		//free parent
 	}
