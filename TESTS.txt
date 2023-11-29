@@ -1,0 +1,53 @@
+#MAIN:
+##outfile & infile tests
+
+infile = -1;
+outfile = -1;
+outfile: open(argv[4], O_CREAT | O_RDWR | O_TRUNC, 0000);  //still works, O_RDWR overrides 0000 permissions
+outfile: open(argv[4], O_CREAT | O_TRUNC, 0000);  //will not work, nothing will be written to outfile
+
+#start_process
+##fd tests
+
+	int test = pipe(end);
+	test = -1;
+	if (test < 0)
+		exit_error("Pipe Error");
+
+##pid tests
+
+pid[0] = -1;
+pid[1] = -1;
+
+#ARGS TESTS
+
+##Errors:
+./pipex infile.txt "grep a1" "wc -w" -> Args Error: use ./pipex infile cmd1 cmd2 outfile
+./pipex infile.txt "grep a1" "wc -w" "outfile.txt" "2" -> Args Error: use ./pipex infile cmd1 cmd2 outfile
+
+./pipex incorrectfile "grep a1" "wc -w" outfile.txt -> infile: No such file or directory
+
+./pipex infile.txt "grep a1" "wc -w" "" -> outfile: No such file or directory
+
+./pipex infile.txt "nonexistant" "wc -w" outfile.txt -> Command Error: No such file or directory
+
+./pipex infile.txt "grep a1" "nonexistant" outfile.txt -> Command Error: No such file or directory
+
+##OK:
+./pipex infile.txt "grep a1" "wc -w" outfile.txt
+< infile.txt grep a1 | wc -w
+
+This cmd takes content of infile.txt, filters lines that have "a1" in it, 
+counts and prints the number of words in those line(s) in the outfile.txt.
+
+./pipex infile.txt "cat" "hostname" "outfile.txt"
+< infile.txt cat | hostname
+
+./pipex infile.txt "grep Now" "head -2" "outfile.txt"
+< infile.txt grep Now | head -2ma
+
+./pipex infile.txt "grep Now" "cat" "outfile.txt"
+< infile.txt grep Now | cat
+
+./pipex infile.txt "grep Now" "$which cat" "outfile.txt"
+< infile.txt grep Now | $(which cat)

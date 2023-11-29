@@ -35,6 +35,7 @@ void	exit_error(char *error)
 	exit(EXIT_FAILURE);
 }
 
+/*
 void	free_two_stars(char **two_stars)
 {
 	int	i;
@@ -47,6 +48,7 @@ void	free_two_stars(char **two_stars)
 	}
 	free(two_stars);
 }
+*/
 
 char	*ft_strjoin(char const *s1, char const *s2)
 {
@@ -102,4 +104,3 @@ char	*ft_strnstr(const char *haystack, const char *needle, size_t len)
 	}
 	return (NULL);
 }
-

@@ -121,16 +121,18 @@ void	start_process(int infile, int outfile, char **argv, char **envp)
 	waitpid(pid[1], NULL, 0);
 }
 
-void a()
+/*void a()
 {
 	system("leaks pipex");
 }
+//atexit(a);
+*/
+
 int	main(int argc, char **argv, char **envp)
 {
 	int		infile;
 	int		outfile;
 
-	//atexit(a);
 	if (argc == 5)
 	{
 		infile = open(argv[1], O_RDONLY);
@@ -140,9 +142,6 @@ int	main(int argc, char **argv, char **envp)
 		if (outfile < 0)
 			exit_error("outfile");
 		start_process(infile, outfile, argv, envp);
-	//system("leaks pipex");
-		//printf("%s", "look the outfile");
-		//free parent
 	}
 	else
 		ft_putstr_fd("Args Error: use ./pipex infile cmd1 cmd2 outfile\n", 1);
