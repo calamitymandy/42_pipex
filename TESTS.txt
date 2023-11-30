@@ -44,10 +44,16 @@ counts and prints the number of words in those line(s) in the outfile.txt.
 < infile.txt cat | hostname
 
 ./pipex infile.txt "grep Now" "head -2" "outfile.txt"
-< infile.txt grep Now | head -2ma
+< infile.txt grep Now | head -2
 
 ./pipex infile.txt "grep Now" "cat" "outfile.txt"
 < infile.txt grep Now | cat
 
 ./pipex infile.txt "grep Now" "$which cat" "outfile.txt"
 < infile.txt grep Now | $(which cat)
+
+./pipex < infile.txt grep Hello | awk '{count++} END {print count}' > output
+< infile.txt grep Hello | awk '{count++} END {print count}'
+
+./pipex "infile.txt" "grep Hello" "awk -f script.awk" "output" +++ CREATE file script.awk with inside: {count++} END {printf "%s", count}
+< infile.txt grep Hello | awk '{count++} END {print count}'

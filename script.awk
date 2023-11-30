@@ -1,0 +1,1 @@
+{count++} END {printf "%s", count}
