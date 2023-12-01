@@ -33,12 +33,19 @@ pid[1] = -1;
 
 ./pipex infile.txt "grep a1" "nonexistant" outfile.txt -> Command Error: No such file or directory
 
+./pipex infile.txt "nonexistant" "nonexistant" outfile.txt -> Command Error: No such file or directory
+
+./pipex infile.txt "grep Hello" "/usr/bin/cat" outfile.txt -> Command Error: No such file or directory
+
 ##OK:
 ./pipex infile.txt "grep a1" "wc -w" outfile.txt
 < infile.txt grep a1 | wc -w
 
-This cmd takes content of infile.txt, filters lines that have "a1" in it, 
-counts and prints the number of words in those line(s) in the outfile.txt.
+./pipex infile.txt "ls -l" "wc -l" outfile
+< infile.txt ls -l | wc -l 
+
+./pipex infile.txt "ls -l" "cat" outfile 
+< infile.txt ls -l | cat
 
 ./pipex infile.txt "cat" "hostname" "outfile.txt"
 < infile.txt cat | hostname
@@ -57,3 +64,6 @@ counts and prints the number of words in those line(s) in the outfile.txt.
 
 ./pipex "infile.txt" "grep Hello" "awk -f script.awk" "output" +++ CREATE file script.awk with inside: {count++} END {printf "%s", count}
 < infile.txt grep Hello | awk '{count++} END {print count}'
+
+./pipex "/dev/random" "grep Hello" "cat" outfile.txt -> keep thinking till ctrl c
+< /dev/random grep Hello | cat > outfile.txt

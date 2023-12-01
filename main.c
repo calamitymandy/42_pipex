@@ -12,7 +12,16 @@
 
 #include "pipex.h"
 
-/* return (0); Si la variable de entorno PATH no está presente en envp*/
+/* The loop is iterating through the `envp` array, the loop continues until it 
+either finds an element that contains "PATH" or reaches the end of the 
+`envp` array.
+The line `every_path = ft_split(envp[i] + 5, ':');` is splitting the string 
+`envp[i] + 5` using the delimiter `':'`.
+The `while (every_path[++i])` loop is iterating through the `every_path` array,
+which contains different directories in the `PATH` environment variable. 
+`if (access(path, F_OK | X_OK) == 0)` is checking if the file specified by 
+`path` exists and is executable, if so return(path), if the loop ends and if
+no existing or executable path return (NULL); */
 
 char	*find_path(char **envp, char *cmd)
 {
@@ -128,6 +137,17 @@ void	start_process(int infile, int outfile, char **argv, char **envp)
 //atexit(a);
 */
 
+/* The `open(argv[4], O_CREAT | O_RDWR | O_TRUNC, 0644);` statement is opening
+a file specified by `argv[4]` for read and write access. `O_TRUNC` is a flag 
+used in the `open` function to truncate the file if it already exists. 
+If the file exists and `O_TRUNC` is specified, the file is truncated to zero 
+length. If the file does not exist, it is created. */
+/* The `close(infile)` and `close(outfile)` statements are closing 
+the file descriptors for the input file (`infile`) and output file 
+(`outfile`) respectively. This is done to free up system resources
+and ensure that the files are properly closed after they are no longer 
+needed. */
+
 int	main(int argc, char **argv, char **envp)
 {
 	int		infile;
@@ -142,6 +162,8 @@ int	main(int argc, char **argv, char **envp)
 		if (outfile < 0)
 			exit_error("outfile");
 		start_process(infile, outfile, argv, envp);
+		close(infile);
+		close(outfile);
 	}
 	else
 		ft_putstr_fd("Args Error: use ./pipex infile cmd1 cmd2 outfile\n", 1);
