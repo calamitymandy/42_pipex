@@ -27,27 +27,10 @@ Each command can be given arguments and options if surrounded by quotation marks
 $ ./pipex inputfile.txt "cat" "grep x" outputfile.txt
 ```
 
-## PATH
-```
-int execve(const char *path, char *const argv[], char *envp[]);
-* path: the path to our command  
-        type `which ls` and `which wc` in your terminal  
-        you'll see the exact path to the commands' binaries
-* argv[]: the args the command needs, for ex. `ls -la`  
-          you can use your ft_split to obtain a char **  
-          like this { "ls", "-la", NULL }  
-          it must be null terminated
-* envp: the environmental variable  
-        you can simply retrieve it in your main (see below)  
-        and pass it onto execve, no need to do anything here  
-        in envp you'll see a line PATH which contains all possible  
-        paths to the commands' binaries
-```
-To see what is inside `envp`, type `env` in your terminal.  
-There is a line `PATH` , which contains all possible paths to the command binaries.  
-split using `:` as a delimiter, and retrieve them. Add a `/` at the end for the path to work correctly.
-The execve function will try every possible path with the cmd to find the correct one. 
-If the command does not exist, execve will do nothing and return -1; else, it will execute the cmd, delete all ongoing processes and exit. 
+## MAIN
+
+The general idea: we read from infile, execute cmd1 with infile as input, send the output to cmd2, which will write to outfile.
+
 
 ```
 int	main(int argc, char **argv, char **envp)
@@ -72,6 +55,54 @@ int	main(int argc, char **argv, char **envp)
 	return (0);
 }
 ```
+## PARENT & 2 CHILDREN PROCESS
+
+### PARENT
+
+pipe() is creating a pipe, which is a mechanism for interprocess communication. 
+It creates a pair of file descriptors, `end[0]` and `end[1]`, where `end[0]` is the fd 
+for reading from the pipe and `end[1]` is the fd for writing to the pipe.
+
+fork() is a system call in Unix-like operating systems that creates a new process by
+duplicating the existing process. The new process, called the child process, is an exact
+copy of the existing process, called the parent process, except for a few values that are
+different. After the `fork()` call, both the parent and child processes continue executing
+from the point immediately after the `fork()` call, but they have different process IDs.
+The child process receives a process ID (pid) of 0, while the parent process receives the
+pid of the child process.
+
+```
+void	start_process(int infile, int outfile, char **argv, char **envp)
+{
+	int		end[2];
+	pid_t	pid[2];
+
+	if (pipe(end) < 0)
+		print error;
+                exit;
+	pid[0] = fork();
+	if (pid[0] < 0)
+		print error;
+                exit;
+	else if (pid[0] == 0)
+		child_1(infile, argv, envp, end);
+	pid[1] = fork();
+	if (pid[1] < 0)
+                print error;
+                exit;
+	else if (pid[1] == 0)
+		child_2(outfile, argv, envp, end);
+	close(end[1]);
+	close(end[0]);
+	waitpid(pid[0], NULL, 0);
+	waitpid(pid[1], NULL, 0);
+}
+```
+### 2 CHILDREN PROCESS
+
+dup2() swaps our files with stdin and stdout.
+
+## PATH
 // parsing (somewhere in your code)
 char *PATH_from_envp;  
 char **mypaths;  
@@ -93,4 +124,27 @@ while (mypaths[++i])
     free(cmd) // if execve fails, we free and we try a new path  
 }  
 return (EXIT_FAILURE);
+```
+
+```
+int execve(const char *path, char *const argv[], char *envp[]);
+* path: the path to our command  
+        type `which ls` and `which wc` in your terminal  
+        you'll see the exact path to the commands' binaries
+* argv[]: the args the command needs, for ex. `ls -la`  
+          you can use your ft_split to obtain a char **  
+          like this { "ls", "-la", NULL }  
+          it must be null terminated
+* envp: the environmental variable  
+        you can simply retrieve it in your main (see below)  
+        and pass it onto execve, no need to do anything here  
+        in envp you'll see a line PATH which contains all possible  
+        paths to the commands' binaries
+```
+To see what is inside `envp`, type `env` in your terminal.  
+There is a line `PATH` , which contains all possible paths to the command binaries.  
+split using `:` as a delimiter, and retrieve them. Add a `/` at the end for the path to work correctly.
+The execve function will try every possible path with the cmd to find the correct one. 
+If the command does not exist, execve will do nothing and return -1; else, it will execute the cmd, delete all ongoing processes and exit. 
+
 ```
