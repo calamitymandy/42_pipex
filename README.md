@@ -43,11 +43,9 @@ int	main(int argc, char **argv, char **envp)
 		infile = open(argv[1], O_RDONLY); // read infile
 		outfile = open(argv[4], O_CREAT | O_RDWR | O_TRUNC, 0644); // create outfile with read & write access, & truncate the file if it already exists. 
 		if (infile < 0)
-			print error;
-                        exit;
+			print error & exit;
 		if (outfile < 0)
-			print error;
-                        exit;
+			print error & exit;
 		start_process(infile, outfile, argv, envp); // to start parent process
 	}
 	else
@@ -71,6 +69,10 @@ from the point immediately after the `fork()` call, but they have different proc
 The child process receives a process ID (pid) of 0, while the parent process receives the
 pid of the child process.
 
+The `waitpid` function is used to wait for a specific child process to 
+terminate. In this case, `waitpid(pid[0], NULL, 0)` is waiting for child_1 
+to terminate, and `waitpid(pid[1], NULL, 0)` is waiting for child_2 to terminate.
+
 ```
 void	start_process(int infile, int outfile, char **argv, char **envp)
 {
@@ -78,18 +80,15 @@ void	start_process(int infile, int outfile, char **argv, char **envp)
 	pid_t	pid[2];
 
 	if (pipe(end) < 0)
-		print error;
-                exit;
+		print error & exit;
 	pid[0] = fork();
 	if (pid[0] < 0)
-		print error;
-                exit;
+		print error & exit;
 	else if (pid[0] == 0)
 		child_1(infile, argv, envp, end);
 	pid[1] = fork();
 	if (pid[1] < 0)
-                print error;
-                exit;
+        print error & exit;
 	else if (pid[1] == 0)
 		child_2(outfile, argv, envp, end);
 	close(end[1]);
@@ -100,7 +99,41 @@ void	start_process(int infile, int outfile, char **argv, char **envp)
 ```
 ### 2 CHILDREN PROCESS
 
-dup2() swaps our files with stdin and stdout.
+dup2() swaps our files with stdin and stdout. It duplicates the fd from first param 
+and assign it to the fd of 2nd param, which is the fd for standard input or standard output. 
+So any input read from standard input will now be read from the 1st param instead.
+And any output written in standard output will now be written into the 2nd param instead.
+
+Child_1 reads from the infile & write the result of the execution of 1st command (argv[2]) 
+into the pipe:
+
+```
+void	child_1(int infile, char **argv, char **envp, int *end)
+{
+	char	**cmd1;
+	char	*path;
+
+	dup2(infile, STDIN_FILENO);
+	close(end[0]);
+	dup2(end[1], STDOUT_FILENO);
+	cmd1 = ft_split(argv[2], ' ');
+	path = find_path(envp, cmd1[0]);
+	if (!path)
+		exit_error("Command Error");
+	if (execve(path, cmd1, envp) == -1)
+		exit_error("Execve Error");
+}
+```
+Child_2 reads from the the pipe the result of the execution of 1st command, then execute the 
+2nd command (argv[3]) and write the result in the outfile:
+
+```
+same as child_1 except with 2nd command and:
+
+	dup2(outfile, STDOUT_FILENO);
+	close(end[1]);
+	dup2(end[0], STDIN_FILENO);
+```
 
 ## PATH
 // parsing (somewhere in your code)
@@ -124,6 +157,30 @@ while (mypaths[++i])
     free(cmd) // if execve fails, we free and we try a new path  
 }  
 return (EXIT_FAILURE);
+
+```
+char	*find_path(char **envp, char *cmd)
+{
+	int		i;
+	char	**every_path;
+	char	*path;
+
+	i = 0;
+	while (envp[i] != NULL && ft_strnstr(envp[i], "PATH", 4) == NULL)
+		i++; // retrieve the line PATH from `envp` array, the loop continues until it 
+				either finds "PATH" or reaches the end of the `envp` array.
+	every_path = ft_split(envp[i] + 5, ':'); // split all paths
+	i = -1;
+	while (every_path[++i])
+	{
+		path = ft_strjoin((ft_strjoin(every_path[i], "/")), cmd); // join path with "/" and cmd
+		free(every_path[i]); //free all paths
+		if (access(path, F_OK | X_OK) == 0)
+			return (path); // if the path + cmd exists and is executable return it
+		free(path);
+	}
+	return (NULL);
+}
 ```
 
 ```
