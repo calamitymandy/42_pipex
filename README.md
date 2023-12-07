@@ -53,6 +53,37 @@ int	main(int argc, char **argv, char **envp)
 	return (0);
 }
 ```
+## PATH
+
+To see what is inside `envp`, type `env` in your terminal. 
+There is a line `PATH` , which contains all possible paths to the command binaries.  
+split using `:` as a delimiter, and retrieve them. Add a `/` at the end for the path to work correctly.
+
+```
+char	*find_path(char **envp, char *cmd)
+{
+	int		i;
+	char	**every_path;
+	char	*path;
+
+	i = 0;
+	while (envp[i] != NULL && ft_strnstr(envp[i], "PATH", 4) == NULL)
+		i++; // retrieve the line PATH from `envp` array, the loop continues until it 
+				either finds "PATH" or reaches the end of the `envp` array.
+	every_path = ft_split(envp[i] + 5, ':'); // split all paths
+	i = -1;
+	while (every_path[++i])
+	{
+		path = ft_strjoin((ft_strjoin(every_path[i], "/")), cmd); // join path with "/" and cmd
+		free(every_path[i]); //free all paths
+		if (access(path, F_OK | X_OK) == 0)
+			return (path); // if the path + cmd exists and is executable return it
+		free(path);
+	}
+	return (NULL);
+}
+```
+
 ## PARENT & 2 CHILDREN PROCESS
 
 ### PARENT
@@ -104,6 +135,9 @@ and assign it to the fd of 2nd param, which is the fd for standard input or stan
 So any input read from standard input will now be read from the 1st param instead.
 And any output written in standard output will now be written into the 2nd param instead.
 
+The execve function will try every possible path with the cmd to find the correct one. 
+If the command does not exist, execve will do nothing and return -1; else, it will execute the cmd, delete all ongoing processes and exit. 
+
 ```
 int execve(const char *path, char *const argv[], char *envp[]);
 * path: the path to our command  
@@ -120,10 +154,7 @@ int execve(const char *path, char *const argv[], char *envp[]);
         paths to the commands' binaries
 ```
 
-The execve function will try every possible path with the cmd to find the correct one. 
-If the command does not exist, execve will do nothing and return -1; else, it will execute the cmd, delete all ongoing processes and exit. 
-
-Child_1 reads from the infile & write the result of the execution of 1st command (argv[2]) 
+* Child_1 reads from the infile & write the result of the execution of 1st command (argv[2]) 
 into the pipe:
 
 ```
@@ -143,7 +174,7 @@ void	child_1(int infile, char **argv, char **envp, int *end)
 		exit_error("Execve Error");
 }
 ```
-Child_2 reads from the the pipe the result of the execution of 1st command, then execute the 
+* Child_2 reads from the the pipe the result of the execution of 1st command, then execute the 
 2nd command (argv[3]) and write the result in the outfile:
 
 ```
@@ -152,35 +183,4 @@ same as child_1 except with 2nd command and:
 	dup2(outfile, STDOUT_FILENO);
 	close(end[1]);
 	dup2(end[0], STDIN_FILENO);
-```
-
-## PATH
-
-To see what is inside `envp`, type `env` in your terminal. 
-There is a line `PATH` , which contains all possible paths to the command binaries.  
-split using `:` as a delimiter, and retrieve them. Add a `/` at the end for the path to work correctly.
-
-```
-char	*find_path(char **envp, char *cmd)
-{
-	int		i;
-	char	**every_path;
-	char	*path;
-
-	i = 0;
-	while (envp[i] != NULL && ft_strnstr(envp[i], "PATH", 4) == NULL)
-		i++; // retrieve the line PATH from `envp` array, the loop continues until it 
-				either finds "PATH" or reaches the end of the `envp` array.
-	every_path = ft_split(envp[i] + 5, ':'); // split all paths
-	i = -1;
-	while (every_path[++i])
-	{
-		path = ft_strjoin((ft_strjoin(every_path[i], "/")), cmd); // join path with "/" and cmd
-		free(every_path[i]); //free all paths
-		if (access(path, F_OK | X_OK) == 0)
-			return (path); // if the path + cmd exists and is executable return it
-		free(path);
-	}
-	return (NULL);
-}
 ```
