@@ -12,7 +12,7 @@ Pipex reproduces the behaviour of the shell pipe | command in c it launches as
 ## Usage
 To compile, use ```make``` or  ```make all```.
 
-Pipex can handle 2. To execute:
+Pipex can handle 2 commands. To execute:
 
 ```
 $ ./pipex input_file cmd1 cmd2 output_file
@@ -97,12 +97,31 @@ void	start_process(int infile, int outfile, char **argv, char **envp)
 	waitpid(pid[1], NULL, 0);
 }
 ```
-### 2 CHILDREN PROCESS
+### TWO CHILDREN PROCESS
 
 dup2() swaps our files with stdin and stdout. It duplicates the fd from first param 
 and assign it to the fd of 2nd param, which is the fd for standard input or standard output. 
 So any input read from standard input will now be read from the 1st param instead.
 And any output written in standard output will now be written into the 2nd param instead.
+
+```
+int execve(const char *path, char *const argv[], char *envp[]);
+* path: the path to our command  
+        type `which ls` and `which wc` in your terminal  
+        you'll see the exact path to the commands' binaries
+* argv[]: the args the command needs, for ex. `ls -la`  
+          you can use your ft_split to obtain a char **  
+          like this { "ls", "-la", NULL }  
+          it must be null terminated
+* envp: the environmental variable  
+        you can simply retrieve it in your main (see below)  
+        and pass it onto execve, no need to do anything here  
+        in envp you'll see a line PATH which contains all possible  
+        paths to the commands' binaries
+```
+
+The execve function will try every possible path with the cmd to find the correct one. 
+If the command does not exist, execve will do nothing and return -1; else, it will execute the cmd, delete all ongoing processes and exit. 
 
 Child_1 reads from the infile & write the result of the execution of 1st command (argv[2]) 
 into the pipe:
@@ -136,27 +155,10 @@ same as child_1 except with 2nd command and:
 ```
 
 ## PATH
-// parsing (somewhere in your code)
-char *PATH_from_envp;  
-char **mypaths;  
-char **mycmdargs;
 
-// retrieve the line PATH from envp  
-PATH_from_envp = ft_substr(envp ....);  
-mypaths = ft_split(PATH_from_envp, ":"); 
-mycmdargs = ft_split(ag[2], " ");
-// in your child or parent processint  i;  
-char *cmd;
-
-i = -1;  
-while (mypaths[++i])  
-{  
-    cmd = ft_join(mypaths[i], ag[2]); // protect your ft_join  
-    execve(cmd, mycmdargs, envp); // if execve succeeds, it exits  
-    // perror("Error"); <- add perror to debug  
-    free(cmd) // if execve fails, we free and we try a new path  
-}  
-return (EXIT_FAILURE);
+To see what is inside `envp`, type `env` in your terminal. 
+There is a line `PATH` , which contains all possible paths to the command binaries.  
+split using `:` as a delimiter, and retrieve them. Add a `/` at the end for the path to work correctly.
 
 ```
 char	*find_path(char **envp, char *cmd)
@@ -181,27 +183,4 @@ char	*find_path(char **envp, char *cmd)
 	}
 	return (NULL);
 }
-```
-
-```
-int execve(const char *path, char *const argv[], char *envp[]);
-* path: the path to our command  
-        type `which ls` and `which wc` in your terminal  
-        you'll see the exact path to the commands' binaries
-* argv[]: the args the command needs, for ex. `ls -la`  
-          you can use your ft_split to obtain a char **  
-          like this { "ls", "-la", NULL }  
-          it must be null terminated
-* envp: the environmental variable  
-        you can simply retrieve it in your main (see below)  
-        and pass it onto execve, no need to do anything here  
-        in envp you'll see a line PATH which contains all possible  
-        paths to the commands' binaries
-```
-To see what is inside `envp`, type `env` in your terminal.  
-There is a line `PATH` , which contains all possible paths to the command binaries.  
-split using `:` as a delimiter, and retrieve them. Add a `/` at the end for the path to work correctly.
-The execve function will try every possible path with the cmd to find the correct one. 
-If the command does not exist, execve will do nothing and return -1; else, it will execute the cmd, delete all ongoing processes and exit. 
-
 ```
