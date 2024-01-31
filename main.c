@@ -36,7 +36,10 @@ char	*find_path(char **envp, char *cmd)
 	i = -1;
 	while (every_path[++i])
 	{
-		path = ft_strjoin((ft_strjoin(every_path[i], "/")), cmd);
+		if (cmd[0] == '/')
+			path = cmd;
+		else
+			path = ft_strjoin((ft_strjoin(every_path[i], "/")), cmd);
 		free(every_path[i]);
 		if (access(path, F_OK | X_OK) == 0)
 			return (path);

@@ -184,3 +184,78 @@ same as child_1 except with 2nd command and:
 	close(end[1]);
 	dup2(end[0], STDIN_FILENO);
 ```
+
+#TESTS
+
+##MAIN:
+###outfile & infile tests:
+
+infile = -1;
+outfile = -1;
+outfile: open(argv[4], O_CREAT | O_RDWR | O_TRUNC, 0000);  //still works, O_RDWR (which means the file can be read from and written to) overrides 0000 permissions
+outfile: open(argv[4], O_CREAT | O_TRUNC, 0000);  //will not work, nothing will be written to outfile
+
+##start_process
+###fd test:
+
+	int test = pipe(end);
+	test = -1;
+	if (test < 0)
+		exit_error("Pipe Error");
+
+###pid tests:
+
+pid[0] = -1;
+pid[1] = -1;
+
+##ARGS TESTS
+
+##Errors:
+./pipex infile.txt "grep a1" "wc -w" -> Args Error: use ./pipex infile cmd1 cmd2 outfile
+./pipex infile.txt "grep a1" "wc -w" "outfile.txt" "2" -> Args Error: use ./pipex infile cmd1 cmd2 outfile
+
+./pipex incorrectfile "grep a1" "wc -w" outfile.txt -> infile: No such file or directory
+
+./pipex infile.txt "grep a1" "wc -w" "" -> outfile: No such file or directory
+
+./pipex infile.txt "nonexistant" "wc -w" outfile.txt -> Command Error: No such file or directory
+
+./pipex infile.txt "grep a1" "nonexistant" outfile.txt -> Command Error: No such file or directory
+
+./pipex infile.txt "nonexistant" "nonexistant" outfile.txt -> Command Error: No such file or directory
+
+./pipex infile.txt "grep Hello" "/usr/bin/cat" outfile.txt -> Command Error: No such file or directory
+
+###OK:
+./pipex infile.txt "grep a1" "wc -w" outfile.txt
+< infile.txt grep a1 | wc -w
+
+./pipex infile.txt "ls -l" "wc -l" outfile.txt
+< infile.txt ls -l | wc -l 
+
+./pipex infile.txt "ls -l" "cat" outfile.txt 
+< infile.txt ls -l | cat
+
+./pipex infile.txt "grep Hello" "/bin/cat" outfile.txt
+< infile.txt grep Hello | /bin/cat
+
+./pipex infile.txt "cat" "hostname" "outfile.txt"
+< infile.txt cat | hostname
+
+./pipex infile.txt "grep Now" "head -2" "outfile.txt"
+< infile.txt grep Now | head -2
+
+./pipex infile.txt "grep Now" "cat" "outfile.txt"
+< infile.txt grep Now | cat
+
+./pipex infile.txt "grep Now" "$which cat" "outfile.txt"
+< infile.txt grep Now | $(which cat)
+
+./pipex "infile.txt" "grep Hello" "awk -f script.awk" "outfile.txt" 
+```
++++ CREATE in repo a file script.awk with inside: {count++} END {printf "%s", count}
+```
+< infile.txt grep Hello | awk '{count++} END {print count}'
+
+./pipex "/dev/random" "grep Hello" "cat" outfile.txt -> keep thinking till ctrl c
+< /dev/random grep Hello | cat > outfile.txt
