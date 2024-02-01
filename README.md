@@ -190,10 +190,10 @@ same as child_1 except with 2nd command and:
 ## MAIN:
 ### outfile & infile tests:
 
-infile = -1;
-outfile = -1;
-outfile: open(argv[4], O_CREAT | O_RDWR | O_TRUNC, 0000);  //still works, O_RDWR (which means the file can be read from and written to) overrides 0000 permissions
-outfile: open(argv[4], O_CREAT | O_TRUNC, 0000);  //will not work, nothing will be written to outfile
+- infile = -1;
+- outfile = -1;
+- outfile: open(argv[4], O_CREAT | O_RDWR | O_TRUNC, 0000);  //still works, O_RDWR (which means the file can be read from and written to) overrides 0000 permissions
+- outfile: open(argv[4], O_CREAT | O_TRUNC, 0000);  //will not work, nothing will be written to outfile
 
 ## start_process
 ### fd test:
